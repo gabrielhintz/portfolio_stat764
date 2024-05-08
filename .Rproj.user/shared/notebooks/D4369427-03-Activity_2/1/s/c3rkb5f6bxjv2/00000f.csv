@@ -1,0 +1,8 @@
+"0","ggplot()+"
+"0","  geom_histogram(data = points, aes(x = Elevation), "
+"0","                 bins = 25, "
+"0","                 color = 'black',"
+"0","                 fill = 'tomato4',"
+"0","                 alpha = .5)+"
+"0","  theme_bw()+"
+"0","  theme(panel.grid = element_blank())"

@@ -1,0 +1,7 @@
+"0","# Predictions"
+"0","test.df <- data.frame(ele = newpoints.test$Elevation,"
+"0","                      lon = st_coordinates(newpoints.test$geometry)[,1],"
+"0","                      lat = st_coordinates(newpoints.test$geometry)[,2])"
+"0",""
+"0","test.df$pred.krig <- predict(krig.mod, newdata = test.df, type = 'response')"
+"0","test.df$pred.rf <- predict(rf.fit, newdata = test.df)"

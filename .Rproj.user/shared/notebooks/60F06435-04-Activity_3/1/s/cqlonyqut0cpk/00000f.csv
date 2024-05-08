@@ -1,0 +1,7 @@
+"0",""
+"0","ggplot()+"
+"0","  geom_sf(data = ks)+"
+"0","  geom_sf(data = df_sf, shape = 21, aes(size = EGA, fill = factor(presence)))+"
+"0","  theme_bw()+"
+"0","  facet_wrap(~year, ncol = 1)"
+"0",""

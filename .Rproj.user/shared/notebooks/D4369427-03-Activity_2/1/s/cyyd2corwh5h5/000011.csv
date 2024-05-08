@@ -1,0 +1,8 @@
+"0",""
+"0","newPoints.rf <- as.data.frame(newPoints) %>% "
+"0","  rename(""lon"" = 'coords.x1', "
+"0","         'lat' = 'coords.x2')"
+"0",""
+"0","pred.rf <- predict(rf.fit, newPoints.rf) %>% as.data.frame()"
+"0",""
+"0","newPoints.rf$ele <- pred.rf$."

@@ -1,0 +1,7 @@
+"0","df.rf <- as.data.frame(points)"
+"0","df.rf$lon <- st_coordinates(points)[,1]"
+"0","df.rf$lat <- st_coordinates(points)[,2]"
+"0",""
+"0","rf.fit <- randomForest(Elevation ~ lon + lat, data=df.rf, ntree=500, importance=TRUE)"
+"0",""
+"0","plot(rf.fit)"

@@ -1,0 +1,7 @@
+"0","ggplot()+"
+"0","  geom_sf(data = polygon)+"
+"0","  geom_sf(data = points, aes(fill = Elevation), shape = 21)+"
+"0","  scale_fill_viridis_c()+"
+"0","  labs(x = 'Longitude', y = 'Latitude')+"
+"0","  theme_bw()+"
+"0","  theme(axis.text.x = element_text(angle = 30))"

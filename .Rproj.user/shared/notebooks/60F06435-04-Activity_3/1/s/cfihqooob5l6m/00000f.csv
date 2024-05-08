@@ -1,0 +1,4 @@
+"0","url.nlcd <- ""https://www.dropbox.com/scl/fi/ew7yzm93aes7l8l37cn65/KS_2011_NLCD.img?rlkey=60ahyvxhq18gt0yr47tuq5fig&dl=1"""
+"0","rl.nlcd2011 <- raster(url.nlcd)"
+"0",""
+"0","plot(rl.nlcd2011)"

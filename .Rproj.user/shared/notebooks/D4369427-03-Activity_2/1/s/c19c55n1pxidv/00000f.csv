@@ -1,0 +1,5 @@
+"0",""
+"0","# Create random points"
+"0","newPoints <- st_sample(polygon, size = 10000, type = ""random"") %>% "
+"0","  as(., 'Spatial') %>% "
+"0","  spTransform(., CRS(proj4string(points %>% as(.,'Spatial'))))"

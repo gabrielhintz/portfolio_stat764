@@ -1,0 +1,13 @@
+h1:activity-3 Activity 3
+h2:upload-data Upload data
+h2:upload-covariates Upload covariates
+h2:for-the-data-on-the-abundance-of-english-grain-aphids-propose-three-different-statistical-models-or-machine-learning-approach-that-are-capable-of-predicting-the-number-of-english-grain-aphids-at-any-location-within-the-state-of-kansas-at-any-time-for-the-years-2014-and-2015.-make-sure-to-write-out-the-three-statistical-models-using-formal-notation-and-fully-describe-each-component-using-words. For the data on the abundance of English grain aphids, propose three different statistical models (or machine learning approach) that are capable of predicting the number of English grain aphids at any location within the state of Kansas at any time for the years 2014 and 2015. Make sure to write out the three statistical models using formal notation and fully describe each component using words.
+h2:for-the-three-statistical-models-you-proposed-in-question-1-propose-a-way-to-measure-the-accuracy-and-perhaps-the-calibration-of-predictions. For the three statistical models you proposed in question #1, propose a way to measure the accuracy (and perhaps the calibration) of predictions.
+h2:fit-the-three-statistical-models-you-proposed-in-question-1-to-the-english-grain-aphid-abundance-data. Fit the three statistical models you proposed in question #1 to the English grain aphid abundance data.
+h3:model-1 Model 1
+h3:model-2 Model 2
+h3:model-3 Model 3
+h2:create-points-for-prediction Create points for prediction
+h2:for-the-three-models-you-fit-in-question-3-which-model-makes-the-most-accurate-predictions-how-good-is-the-best-model-in-real-world-terms-remember-we-are-trying-to-predict-the-number-of-english-grain-aphids-which-is-a-count For the three models you fit in question #3, which model makes the most accurate predictions? How good is the best model in real world terms? Remember we are trying to predict the number of English grain aphids, which is a count!
+h2:summarize-your-results-using-words-numerical-values-and-figuresmaps. Summarize your results using words, numerical values and figures/maps.
+
