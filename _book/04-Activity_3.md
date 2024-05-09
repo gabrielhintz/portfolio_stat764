@@ -71,7 +71,7 @@ Data model $$Z = y$$ Process model Using Poisson distribution
 $$[y|\lambda] = Poisson(\lambda) $$
 
 $$\eta_s\sim MUN(0, \sigma)$$ $$\eta_t\sim MVN(0, \sigma)$$
-$$E(y)=e^{\beta_0+\beta_1\cdot X~\eta_s+\eta_t}$$
+$$E(y)=e^{\beta_0+\beta_1\cdot X + \eta_s+\eta_t}$$
 
 *Model 2*
 
@@ -81,7 +81,7 @@ $$Z = y$$ Process model Using Negative binomial distribution
 
 $$[y|r,p] = NB(r, p)$$ $$\eta_s\sim MVN(0, \sigma)$$
 $$\eta_t\sim  MVN(0, \sigma)$$
-$$E(y)=e^{\beta_0+\beta_1\cdot X~\eta_s+\eta_t}$$
+$$E(y)=e^{\beta_0+\beta_1\cdot X + \eta_s+\eta_t}$$
 
 *Model 3*
 
@@ -90,7 +90,10 @@ Data model
 $$Z = y$$ Process model Using zero inflated poisson distribution
 
 $$[y|p, \lambda]=ZIP(p,\lambda)$$ $$\eta_s\sim MVN(0, \sigma^2)$$
-$$E(y)=e^{\beta_0+\beta_1\cdot X~\eta_s+\eta_t}$$
+$$P(y=0) = p\cdot e^{-0} + (1-p) \cdot e^{-{\lambda}}$$
+$$P(y = k) = (1-p) \cdot \frac{(e^{-{\lambda}}{\lambda^k})}{k!}, k \in N$$
+$${\lambda} > 0, p \in (0,1)$$
+$$E(y)=e^{\beta_0+\beta_1\cdot X + \eta_s+\eta_t}$$
 
 ## For the three statistical models you proposed in question #1, propose a way to measure the accuracy (and perhaps the calibration) of predictions.
 
@@ -110,13 +113,22 @@ ggplot()+
 
 <img src="04-Activity_3_files/figure-html/unnamed-chunk-3-1.png" width="672" />
 
+## Data Split 
+
+
+```r
+set.seed(100)
+df.sample <- sample(c(TRUE,FALSE), nrow(df), replace=TRUE, prob=c(0.5,0.5))
+df.train <- df[df.sample,]
+df.test <- df[!df.sample,]
+```
 
 ### Model 1
 
 
 ```r
 m1 <- gam(EGA ~ grass.perc + as.factor(year) + s(long,lat, bs = "gp"), 
-          family = poisson(link = "log"), data = df)
+          family = poisson(link = "log"), data = df.train)
 
 summary(m1)
 #> 
@@ -127,10 +139,10 @@ summary(m1)
 #> EGA ~ grass.perc + as.factor(year) + s(long, lat, bs = "gp")
 #> 
 #> Parametric coefficients:
-#>                       Estimate Std. Error z value Pr(>|z|)
-#> (Intercept)         -3.1624342  0.2629681 -12.026   <2e-16
-#> grass.perc          -0.0084544  0.0009811  -8.617   <2e-16
-#> as.factor(year)2015  5.5241770  0.2584600  21.373   <2e-16
+#>                      Estimate Std. Error z value Pr(>|z|)
+#> (Intercept)         -4.072721   0.508579  -8.008 1.17e-15
+#> grass.perc          -0.034166   0.001664 -20.538  < 2e-16
+#> as.factor(year)2015  6.148542   0.500663  12.281  < 2e-16
 #>                        
 #> (Intercept)         ***
 #> grass.perc          ***
@@ -141,13 +153,13 @@ summary(m1)
 #> 
 #> Approximate significance of smooth terms:
 #>               edf Ref.df Chi.sq p-value    
-#> s(long,lat) 31.97     32   8009  <2e-16 ***
+#> s(long,lat) 31.45   31.8   5663  <2e-16 ***
 #> ---
 #> Signif. codes:  
 #> 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> R-sq.(adj) =  0.395   Deviance explained = 69.9%
-#> UBRE = 28.333  Scale est. = 1         n = 341
+#> R-sq.(adj) =   0.67   Deviance explained = 81.1%
+#> UBRE = 17.558  Scale est. = 1         n = 178
 ```
 
 ### Model 2
@@ -155,21 +167,21 @@ summary(m1)
 
 ```r
 m2 <- gam(EGA ~ grass.perc + as.factor(year) + s(long,lat, bs = "gp"), 
-          family = nb(theta = NULL,link = "log"), data = df)
+          family = nb(theta = NULL,link = "log"), data = df.train)
 
 summary(m2)
 #> 
-#> Family: Negative Binomial(0.623) 
+#> Family: Negative Binomial(0.653) 
 #> Link function: log 
 #> 
 #> Formula:
 #> EGA ~ grass.perc + as.factor(year) + s(long, lat, bs = "gp")
 #> 
 #> Parametric coefficients:
-#>                      Estimate Std. Error z value Pr(>|z|)
-#> (Intercept)         -2.512753   0.343910  -7.306 2.74e-13
-#> grass.perc          -0.005170   0.004665  -1.108    0.268
-#> as.factor(year)2015  5.164253   0.325909  15.846  < 2e-16
+#>                     Estimate Std. Error z value Pr(>|z|)
+#> (Intercept)         -3.29390    0.61890  -5.322 1.03e-07
+#> grass.perc          -0.00141    0.00678  -0.208    0.835
+#> as.factor(year)2015  5.67995    0.59656   9.521  < 2e-16
 #>                        
 #> (Intercept)         ***
 #> grass.perc             
@@ -180,13 +192,13 @@ summary(m2)
 #> 
 #> Approximate significance of smooth terms:
 #>               edf Ref.df Chi.sq p-value    
-#> s(long,lat) 8.884  11.75  372.1  <2e-16 ***
+#> s(long,lat) 8.356  11.02  224.3  <2e-16 ***
 #> ---
 #> Signif. codes:  
 #> 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> R-sq.(adj) =  0.247   Deviance explained = 68.6%
-#> -REML = 962.32  Scale est. = 1         n = 341
+#> R-sq.(adj) =  0.263   Deviance explained = 72.7%
+#> -REML = 493.04  Scale est. = 1         n = 178
 ```
 
 ### Model 3
@@ -195,7 +207,7 @@ summary(m2)
 ```r
 
 m3 <- gam(list(EGA ~ grass.perc + as.factor(year) + s(long,lat, bs = "gp"), ~ grass.perc + s(long,lat, bs = "gp")), 
-          family = ziplss(), data = df)
+          family = ziplss(), data = df.train)
 
 summary(m3)
 #> 
@@ -207,12 +219,12 @@ summary(m3)
 #> ~grass.perc + s(long, lat, bs = "gp")
 #> 
 #> Parametric coefficients:
-#>                       Estimate Std. Error z value Pr(>|z|)
-#> (Intercept)         -1.5217298  0.3565564  -4.268 1.97e-05
-#> grass.perc          -0.0098653  0.0009923  -9.942  < 2e-16
-#> as.factor(year)2015  4.0446085  0.3513845  11.510  < 2e-16
-#> (Intercept).1       -0.0430138  0.1513463  -0.284    0.776
-#> grass.perc.1         0.0026990  0.0044434   0.607    0.544
+#>                      Estimate Std. Error z value Pr(>|z|)
+#> (Intercept)         -3.561202   0.936080  -3.804 0.000142
+#> grass.perc          -0.039519   0.001732 -22.811  < 2e-16
+#> as.factor(year)2015  5.546180   0.927371   5.981 2.22e-09
+#> (Intercept).1       -0.038220   0.186544  -0.205 0.837661
+#> grass.perc.1         0.001405   0.005252   0.267 0.789118
 #>                        
 #> (Intercept)         ***
 #> grass.perc          ***
@@ -224,15 +236,15 @@ summary(m3)
 #> 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> Approximate significance of smooth terms:
-#>                 edf Ref.df  Chi.sq  p-value    
-#> s(long,lat)   31.55  31.84 6583.32  < 2e-16 ***
-#> s.1(long,lat) 11.98  15.64   43.45 0.000195 ***
+#>                  edf Ref.df  Chi.sq p-value    
+#> s(long,lat)   30.937 31.330 4819.22 < 2e-16 ***
+#> s.1(long,lat)  2.828  3.463   16.34 0.00192 ** 
 #> ---
 #> Signif. codes:  
 #> 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Deviance explained = 61.3%
-#> -REML = 5369.7  Scale est. = 1         n = 341
+#> Deviance explained = 78.1%
+#> -REML = 1765.8  Scale est. = 1         n = 178
 ```
 
 ## Create points for prediction
@@ -279,14 +291,14 @@ ggplot()+
 
   geom_tile(data = newPoints, aes(x = long, y = lat, fill = y_pred1))+
     geom_sf(data = ks, fill = NA, color = 'black')+
-  scale_fill_viridis_c(values = c(0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1))+
+  scale_fill_viridis_c()+
   labs(x = 'Longitude', y = 'Latitude')+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 30))+
   facet_wrap(~year, ncol = 1)
 ```
 
-<img src="04-Activity_3_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+<img src="04-Activity_3_files/figure-html/unnamed-chunk-9-1.png" width="672" />
 
 
 ```r
@@ -305,47 +317,45 @@ ggplot()+
   facet_wrap(~year, ncol = 1)
 ```
 
-<img src="04-Activity_3_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+<img src="04-Activity_3_files/figure-html/unnamed-chunk-10-1.png" width="672" />
 
 
 ```r
 # Fit mod 3
 newPoints$y_pred3 <- predict(m3, newPoints, type = 'response')
 
-# m3.pred <- st_as_sf(newPoints, coords = c('long', 'lat'), crs = st_crs(ks),
-                    # agr = 'constant') 
 
 ggplot()+
 
   geom_tile(data = newPoints, aes(x = long, y = lat, fill = y_pred3))+
     geom_sf(data = ks, fill = NA, color = 'black')+
-  scale_fill_viridis_c(values = c(0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1))+
+  scale_fill_viridis_c()+
   labs(x = 'Longitude', y = 'Latitude')+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 30))+
   facet_wrap(~year, ncol = 1)
 ```
 
-<img src="04-Activity_3_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+<img src="04-Activity_3_files/figure-html/unnamed-chunk-11-1.png" width="672" />
 
 ## For the three models you fit in question #3, which model makes the most accurate predictions? How good is the best model in real world terms? Remember we are trying to predict the number of English grain aphids, which is a count!
 
 
 ```r
-rmse.m1 <- rmse(df$EGA, as.numeric(predict(m1, df, type = 'response')))
-mae.m1 <- mae(df$EGA, as.numeric(predict(m1, df, type = 'response')))
+rmse.m1 <- rmse(df.test$EGA, as.numeric(predict(m1, df.test, type = 'response')))
+mae.m1 <- mae(df.test$EGA, as.numeric(predict(m1, df.test, type = 'response')))
 
-rmse.m2 <- rmse(df$EGA, as.numeric(predict(m2, df, type = 'response')))
-mae.m2 <- mae(df$EGA, as.numeric(predict(m2, df, type = 'response')))
+rmse.m2 <- rmse(df.test$EGA, as.numeric(predict(m2, df.test, type = 'response')))
+mae.m2 <- mae(df.test$EGA, as.numeric(predict(m2, df.test, type = 'response')))
 
-rmse.m3 <- rmse(df$EGA, as.numeric(predict(m3, df, type = 'response')))
-mae.m3 <- mae(df$EGA, as.numeric(predict(m3, df, type = 'response')))
+rmse.m3 <- rmse(df.test$EGA, as.numeric(predict(m3, df.test, type = 'response')))
+mae.m3 <- mae(df.test$EGA, as.numeric(predict(m3, df.test, type = 'response')))
 
 #m1 metrics
 
-m1Metrics <- df %>% 
+m1Metrics <- df.test %>% 
   ggplot()+
-  geom_point(aes(predict(m1, df, type = 'response'), EGA), 
+  geom_point(aes(predict(m1, df.test, type = 'response'), EGA), 
 fill = 'purple4', color = 'black', shape = 21, size = 2,
              alpha = .7)+
   geom_abline(slope = 1)+
@@ -361,9 +371,9 @@ fill = 'purple4', color = 'black', shape = 21, size = 2,
 
 #m2 metrics
 
-m2Metrics <- df %>% 
+m2Metrics <- df.test %>% 
   ggplot()+
-  geom_point(aes(predict(m2, df, type = 'response'), EGA), 
+  geom_point(aes(predict(m2, df.test, type = 'response'), EGA), 
              fill = 'purple4', color = 'black', shape = 21, size = 2,
              alpha = .7)+
   geom_abline(slope = 1)+
@@ -377,9 +387,9 @@ m2Metrics <- df %>%
         text = element_text(size = 12)
         )
 
-m3Metrics <- df %>% 
+m3Metrics <- df.test %>% 
   ggplot()+
-  geom_point(aes(predict(m3, df, type = 'response'), EGA), 
+  geom_point(aes(predict(m3, df.test, type = 'response'), EGA), 
              fill = 'purple4', color = 'black', shape = 21, size = 2,
              alpha = .7)+
   geom_abline(slope = 1)+
@@ -397,16 +407,20 @@ m3Metrics <- df %>%
 ggarrange(m1Metrics,m2Metrics, m3Metrics, nrow = 1)
 ```
 
-<img src="04-Activity_3_files/figure-html/unnamed-chunk-11-1.png" width="1008" />
+<img src="04-Activity_3_files/figure-html/unnamed-chunk-12-1.png" width="1008" />
 
 ```r
 
 AIC(m1, m2, m3)
-#>          df       AIC
-#> m1 34.97341 10896.425
-#> m2 13.90150  1913.024
-#> m3 50.09095 10464.469
+#>          df      AIC
+#> m1 34.44604 3764.439
+#> m2 14.12373  980.207
+#> m3 39.79306 3313.507
 ```
 
 ## Summarize your results using words, numerical values and figures/maps.
+
+The three models were tested after splitting the data into testing and training through MAE and RMSE. In addition, AIC was compared. Both methods suggested that the model 2 was the best one. Below the predictions using the model 2 are presented for both years 2014 and 2015. The year 2014 resulted in very minimum abundance of EGA, while in 2015, the East region showed a high concentration of EGA.
+
+<img src="04-Activity_3_files/figure-html/unnamed-chunk-13-1.png" width="672" />
 

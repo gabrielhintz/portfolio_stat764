@@ -68,7 +68,7 @@ Data model $$Z = y$$ Process model Using Poisson distribution
 $$[y|\lambda] = Poisson(\lambda) $$
 
 $$\eta_s\sim MUN(0, \sigma)$$ $$\eta_t\sim MVN(0, \sigma)$$
-$$E(y)=e^{\beta_0+\beta_1\cdot X~\eta_s+\eta_t}$$
+$$E(y)=e^{\beta_0+\beta_1\cdot X + \eta_s+\eta_t}$$
 
 *Model 2*
 
@@ -78,7 +78,7 @@ $$Z = y$$ Process model Using Negative binomial distribution
 
 $$[y|r,p] = NB(r, p)$$ $$\eta_s\sim MVN(0, \sigma)$$
 $$\eta_t\sim  MVN(0, \sigma)$$
-$$E(y)=e^{\beta_0+\beta_1\cdot X~\eta_s+\eta_t}$$
+$$E(y)=e^{\beta_0+\beta_1\cdot X + \eta_s+\eta_t}$$
 
 *Model 3*
 
@@ -87,7 +87,10 @@ Data model
 $$Z = y$$ Process model Using zero inflated poisson distribution
 
 $$[y|p, \lambda]=ZIP(p,\lambda)$$ $$\eta_s\sim MVN(0, \sigma^2)$$
-$$E(y)=e^{\beta_0+\beta_1\cdot X~\eta_s+\eta_t}$$
+$$P(y=0) = p\cdot e^{-0} + (1-p) \cdot e^{-{\lambda}}$$
+$$P(y = k) = (1-p) \cdot \frac{(e^{-{\lambda}}{\lambda^k})}{k!}, k \in N$$
+$${\lambda} > 0, p \in (0,1)$$
+$$E(y)=e^{\beta_0+\beta_1\cdot X + \eta_s+\eta_t}$$
 
 ## For the three statistical models you proposed in question #1, propose a way to measure the accuracy (and perhaps the calibration) of predictions.
 
@@ -105,12 +108,20 @@ ggplot()+
 
 ```
 
+## Data Split 
+
+```{r}
+set.seed(100)
+df.sample <- sample(c(TRUE,FALSE), nrow(df), replace=TRUE, prob=c(0.5,0.5))
+df.train <- df[df.sample,]
+df.test <- df[!df.sample,]
+```
 
 ### Model 1
 
 ```{r}
 m1 <- gam(EGA ~ grass.perc + as.factor(year) + s(long,lat, bs = "gp"), 
-          family = poisson(link = "log"), data = df)
+          family = poisson(link = "log"), data = df.train)
 
 summary(m1)
 ```
@@ -119,7 +130,7 @@ summary(m1)
 
 ```{r}
 m2 <- gam(EGA ~ grass.perc + as.factor(year) + s(long,lat, bs = "gp"), 
-          family = nb(theta = NULL,link = "log"), data = df)
+          family = nb(theta = NULL,link = "log"), data = df.train)
 
 summary(m2)
 ```
@@ -129,7 +140,7 @@ summary(m2)
 ```{r}
 
 m3 <- gam(list(EGA ~ grass.perc + as.factor(year) + s(long,lat, bs = "gp"), ~ grass.perc + s(long,lat, bs = "gp")), 
-          family = ziplss(), data = df)
+          family = ziplss(), data = df.train)
 
 summary(m3)
 
@@ -180,7 +191,7 @@ ggplot()+
 
   geom_tile(data = newPoints, aes(x = long, y = lat, fill = y_pred1))+
     geom_sf(data = ks, fill = NA, color = 'black')+
-  scale_fill_viridis_c(values = c(0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1))+
+  scale_fill_viridis_c()+
   labs(x = 'Longitude', y = 'Latitude')+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 30))+
@@ -207,14 +218,12 @@ ggplot()+
 # Fit mod 3
 newPoints$y_pred3 <- predict(m3, newPoints, type = 'response')
 
-# m3.pred <- st_as_sf(newPoints, coords = c('long', 'lat'), crs = st_crs(ks),
-                    # agr = 'constant') 
 
 ggplot()+
 
   geom_tile(data = newPoints, aes(x = long, y = lat, fill = y_pred3))+
     geom_sf(data = ks, fill = NA, color = 'black')+
-  scale_fill_viridis_c(values = c(0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1))+
+  scale_fill_viridis_c()+
   labs(x = 'Longitude', y = 'Latitude')+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 30))+
@@ -226,20 +235,20 @@ ggplot()+
 ## For the three models you fit in question #3, which model makes the most accurate predictions? How good is the best model in real world terms? Remember we are trying to predict the number of English grain aphids, which is a count!
 
 ```{r, fig.width= 10.5, fig.height=3.5}
-rmse.m1 <- rmse(df$EGA, as.numeric(predict(m1, df, type = 'response')))
-mae.m1 <- mae(df$EGA, as.numeric(predict(m1, df, type = 'response')))
+rmse.m1 <- rmse(df.test$EGA, as.numeric(predict(m1, df.test, type = 'response')))
+mae.m1 <- mae(df.test$EGA, as.numeric(predict(m1, df.test, type = 'response')))
 
-rmse.m2 <- rmse(df$EGA, as.numeric(predict(m2, df, type = 'response')))
-mae.m2 <- mae(df$EGA, as.numeric(predict(m2, df, type = 'response')))
+rmse.m2 <- rmse(df.test$EGA, as.numeric(predict(m2, df.test, type = 'response')))
+mae.m2 <- mae(df.test$EGA, as.numeric(predict(m2, df.test, type = 'response')))
 
-rmse.m3 <- rmse(df$EGA, as.numeric(predict(m3, df, type = 'response')))
-mae.m3 <- mae(df$EGA, as.numeric(predict(m3, df, type = 'response')))
+rmse.m3 <- rmse(df.test$EGA, as.numeric(predict(m3, df.test, type = 'response')))
+mae.m3 <- mae(df.test$EGA, as.numeric(predict(m3, df.test, type = 'response')))
 
 #m1 metrics
 
-m1Metrics <- df %>% 
+m1Metrics <- df.test %>% 
   ggplot()+
-  geom_point(aes(predict(m1, df, type = 'response'), EGA), 
+  geom_point(aes(predict(m1, df.test, type = 'response'), EGA), 
 fill = 'purple4', color = 'black', shape = 21, size = 2,
              alpha = .7)+
   geom_abline(slope = 1)+
@@ -255,9 +264,9 @@ fill = 'purple4', color = 'black', shape = 21, size = 2,
 
 #m2 metrics
 
-m2Metrics <- df %>% 
+m2Metrics <- df.test %>% 
   ggplot()+
-  geom_point(aes(predict(m2, df, type = 'response'), EGA), 
+  geom_point(aes(predict(m2, df.test, type = 'response'), EGA), 
              fill = 'purple4', color = 'black', shape = 21, size = 2,
              alpha = .7)+
   geom_abline(slope = 1)+
@@ -271,9 +280,9 @@ m2Metrics <- df %>%
         text = element_text(size = 12)
         )
 
-m3Metrics <- df %>% 
+m3Metrics <- df.test %>% 
   ggplot()+
-  geom_point(aes(predict(m3, df, type = 'response'), EGA), 
+  geom_point(aes(predict(m3, df.test, type = 'response'), EGA), 
              fill = 'purple4', color = 'black', shape = 21, size = 2,
              alpha = .7)+
   geom_abline(slope = 1)+
@@ -294,4 +303,17 @@ AIC(m1, m2, m3)
 ```
 
 ## Summarize your results using words, numerical values and figures/maps.
+
+The three models were tested after splitting the data into testing and training through MAE and RMSE. In addition, AIC was compared. Both methods suggested that the model 2 was the best one. Below the predictions using the model 2 are presented for both years 2014 and 2015. The year 2014 resulted in very minimum abundance of EGA, while in 2015, the East region showed a high concentration of EGA.
+
+```{r echo=FALSE}
+ggplot()+
+  geom_tile(data = newPoints, aes(x = long, y = lat, fill = y_pred2))+
+    geom_sf(data = ks, fill = NA, color = 'black')+
+  scale_fill_viridis_c()+
+  labs(x = 'Longitude', y = 'Latitude')+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 30))+
+  facet_wrap(~year, ncol = 1)
+```
 
