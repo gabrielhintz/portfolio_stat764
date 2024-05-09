@@ -13,3 +13,6 @@ biblio-style: apalike
 csl: chicago-fullnote-bibliography.csl
 ---
 
+# About
+
+This portfolio contains all the notes taken from the course STAT764 throughout Spring 2024 at K-State.

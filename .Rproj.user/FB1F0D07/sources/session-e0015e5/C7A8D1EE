@@ -3,7 +3,7 @@
     "path": "~/GitHub/portfolio_stat764/index.Rmd",
     "project_path": "index.Rmd",
     "type": "r_markdown",
-    "hash": "0",
+    "hash": "1704879523",
     "contents": "",
     "dirty": false,
     "created": 1715201700865.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "15,0",
+        "cursorPosition": "17,102",
         "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1715201810,
+    "lastKnownWriteTime": 1715266339,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1715201810615,
+    "last_content_update": 1715266339121,
     "read_only": false,
     "read_only_alternatives": []
 }
