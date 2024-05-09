@@ -14,5 +14,7 @@ csl: chicago-fullnote-bibliography.csl
 ---
 
 # About
+*STAT 764*
+Gabriel Hintz
 
-This portfolio contains all the notes taken from the course STAT764 throughout Spring 2024 at K-State.
+This portfolio contains the activities and all the notes taken from the course STAT764 throughout Spring 2024 at K-State. 
