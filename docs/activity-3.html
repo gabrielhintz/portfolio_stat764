@@ -122,17 +122,17 @@
 <p><em>Model 1</em></p>
 <p>Data model <span class="math display">\[Z = y\]</span> Process model Using Poisson distribution</p>
 <p><span class="math display">\[[y|\lambda] = Poisson(\lambda) \]</span></p>
-<p><span class="math display">\[\eta_s\sim MUN(0, \sigma)\]</span> 
+<p><span class="math display">\[\eta_s\sim MUN(0, \Sigma)\]</span> 
 <span class="math display">\[E(y)=e^{\beta_0+\beta_1\cdot X + \eta_s+\eta_t}\]</span></p>
 <p><em>Model 2</em></p>
 <p>Data model</p>
 <p><span class="math display">\[Z = y\]</span> Process model Using Negative binomial distribution</p>
-<p><span class="math display">\[[y|r,p] = NB(r, p)\]</span> <span class="math display">\[\eta_s\sim MVN(0, \sigma)\]</span>
+<p><span class="math display">\[[y|r,p] = NB(r, p)\]</span> <span class="math display">\[\eta_s\sim MVN(0, \Sigma)\]</span>
 <span class="math display">\[E(y)=e^{\beta_0+\beta_1\cdot X + \eta_s+\eta_t}\]</span></p>
 <p><em>Model 3</em></p>
 <p>Data model</p>
 <p><span class="math display">\[Z = y\]</span> Process model Using zero inflated poisson distribution</p>
-<p><span class="math display">\[[y|p, \lambda]=ZIP(p,\lambda)\]</span> <span class="math display">\[\eta_s\sim MVN(0, \sigma^2)\]</span>
+<p><span class="math display">\[[y|p, \lambda]=ZIP(p,\lambda)\]</span> <span class="math display">\[\eta_s\sim MVN(0, \Sigma)\]</span>
 <span class="math display">\[P(y=0) = p\cdot e^{-0} + (1-p) \cdot e^{-{\lambda}}\]</span>
 <span class="math display">\[P(y = k) = (1-p) \cdot \frac{(e^{-{\lambda}}{\lambda^k})}{k!}, k \in N\]</span>
 <span class="math display">\[{\lambda} &gt; 0, p \in (0,1)\]</span>
